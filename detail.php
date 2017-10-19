@@ -9,14 +9,14 @@
 <?php
 $id = $_GET["id"];
 $dbid_id=explode("_", $id);
-$dbid=$id[0]
-$id=$id[1]
+$dbid=$dbid_id[0];
+$id=$dbid_id[1];
 $link=mysql_connect("localhost","root","");
 if (!$link){
     print(mysql_error());
 }
 $db=mysql_select_db("bacteria_protein",$link);
-$sql = "SELECT * FROM " . $dbid . " protein_motif" WHERE id = {$id};";
+$sql = "SELECT * FROM " . $dbid . " WHERE id = {$id};";
 $result = mysql_query($sql);
 $array = mysql_fetch_array($result);
 
@@ -39,7 +39,7 @@ if (!$link){
 }
 $db=mysql_select_db("bacteria_protein",$link);
 $id=str_replace(".","",$protein_id);
-$id=substr($id,-3,2);
+$id=substr($id,-4,2);
 $sql="SELECT protein_name FROM protein" . $id ." WHERE protein_id = " . '"' . $protein_id . '"' . " ;";
 $protein_name = mysql_query($sql);
 if($protein_name){
@@ -60,8 +60,8 @@ if (!$link){
 }
 $db=mysql_select_db("bacteria_protein",$link);
 $id=str_replace(".","",$protein_id);
-$id=substr($id,-3,2);
-$sql="SELECT sequence FROM protein" . $id ." WHERE protein_id = " . '"' . $protein_id . '"' . " ;";
+$id=substr($id,-4,2);
+$sql="SELECT seq FROM protein" . $id ." WHERE protein_id = " . '"' . $protein_id . '"' . " ;";
 $sequence = mysql_query($sql);
 if($sequence){
     $sequence = mysql_fetch_array($sequence);
@@ -81,8 +81,8 @@ if (!$link){
 }
 $db=mysql_select_db("bacteria_protein",$link);
 $id=str_replace(".","",$protein_id);
-$id=substr($id,-3,2);
-$sql="SELECT seq FROM protein" . $id ." WHERE protein_id = " . '"' . $protein_id . '"' . " ;";
+$id=substr($id,-4,2);
+$sql="SELECT length FROM protein" . $id ." WHERE protein_id = " . '"' . $protein_id . '"' . " ;";
 $length = mysql_query($sql);
 if($length){
     $length = mysql_fetch_array($length);
@@ -108,8 +108,8 @@ if (!$link){
     print(mysql_error());
 }
 $db=mysql_select_db("bacteria_protein",$link);
-$id=substr($motif_id,-2,2);
-$sql="SELECT motif_name FROM motif" . $id . " id = " . '"' . $motif_id . '"' . " ;";
+$id=substr($motif_id,-3,2);
+$sql="SELECT motif_name FROM motif" . $id . " WHERE motif_id = " . '"' . $motif_id . '"' . " ;";
 $motif_name = mysql_query($sql);
 if($motif_name){
     $motif_name = mysql_fetch_array($motif_name);

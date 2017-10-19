@@ -12,24 +12,17 @@ while ($array = mysql_fetch_array($result)){
 }
 $entries = count($arrays);
 
+// TODO タンパク質の全長により横線のサイズを変える
 // 画像全体の生成
+// (画像自体は1500*100)
 $img = ImageCreate(2000, 400);
 $bground = ImageColorAllocate($img, 255, 255, 255);
-ImageFilledRectangle($img, 0, 0, 2000, 400, $bground);
+//ImageFilledRectangle($img, 0, 0, 2000, 400, $bground);
 
 // 1本の横線
+// TODO:1500のところは、タンパク質の長さに変えたい
 $black = ImageColorAllocate($img, 0, 0, 0);
-$dbid=str_replace(".","",$id);
-$dbid=substr($id,-4,2);
-$sql="SELECT length FROM protein" . $dbid ." WHERE protein_id = " . '"' . $id . '"' . " ;";
-$length = mysql_query($sql);
-if($length){
-    $length = mysql_fetch_array($length);
-    $length = $length[0];
-} else {
-    $length = 1500;
-}
-ImageFilledRectangle($img, 0, 94, $length, 96, $black);
+//ImageFilledRectangle($img, 0, 94, 1500, 96, $black);
 
 // すでに文字の存在する空間の配列の配列
 $filled = array();
@@ -56,7 +49,8 @@ for($i=0;$i<$entries;$i++){
     // 変更する前のmotif_idを出力のために控えておく
     $motif_id_old = $motif_id;
     // ここから描画
-    $motif_id = substr($motif_id, 3, 5);
+    $motif_id = substr($motif_id, 3,5);
+    echo $motif_id;
     while(true){
         $first = substr($motif_id, 0, 1);
         if ($first == "0") {
@@ -86,14 +80,14 @@ for($i=0;$i<$entries;$i++){
     }
     // 重ならないなら、線より上に表示
     if ($included_square == 0){
-        ImageFilledRectangle($img, $start, 45, $end, 93, $color);
+        //ImageFilledRectangle($img, $start, 45, $end, 93, $color);
         for ($l = $start; $l < $end; $l++){
             $filled_square[] = $l;
         }
     }
     // 重なるなら、線より下に表示
     else {
-        ImageFilledRectangle($img, $start, 97, $end, 145, $color);
+        //ImageFilledRectangle($img, $start, 97, $end, 145, $color);
     }
     // 描画する文字
     $message = $motif_id_old." ".$motif_name;
@@ -153,9 +147,9 @@ for($i=0;$i<$entries;$i++){
     else {
         $draw_position = 100 + $position * 15;
     }
-    imagestring($img, 5, $start, $draw_position, $message, $black);
+    //imagestring($img, 5, $start, $draw_position, $message, $black);
 }
 
-header('Content-Type: image/png');
-ImagePNG($img);
+//header('Content-Type: image/png');
+//ImagePNG($img);
 ?>
