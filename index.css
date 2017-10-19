@@ -1,6 +1,8 @@
 body{
+    width:300px;
     margin-top:20px;
-    margin-left:30px;
+    margin-left:auto;
+    margin-right:auto;
 }
 
 #title{
@@ -13,27 +15,5 @@ form{
     font-size:1.5em;
 }
 
-table{
-    margin-top:10px;
+.comment{
 }
-
-table th{
-    background-color: #e0e0e0;
-    padding-left:1em;
-    padding-right:1em;
-}
-
-table td{
-    padding-left:1em;
-    padding-right:1em;
-}
-
-table td:nth-child(odd) {
-    background:#F0E68C;
-}
-table td:nth-child(even) {
-    background:#FFFACD;
-}
-
-a:link { color: #FF4500; }
-a:visited { color: #8B0000; }

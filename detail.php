@@ -6,6 +6,10 @@
 <div id="title">Bacteria Protein DataBase</div>
 <br/>
 
+<form id="return_btn">
+<input type="button" value="検索結果に戻る" onClick="history.back()">
+</form>
+
 <?php
 $id = $_GET["id"];
 $dbid_id=explode("_", $id);
@@ -49,6 +53,21 @@ if($protein_name){
     $protein_name = "";
 }
 td($protein_name);
+echo "</tr>";
+
+// gene_name
+echo "<tr>";
+td("gene_name");
+$protein_id2=substr($protein_id,0,-1);
+$sql = "SELECT gene_name FROM gene_namep" . $id . " WHERE protein_id = " . '"' . $protein_id2 . '"' . " ;";
+$gene_name = mysql_query($sql);
+$gene_name = mysql_fetch_array($gene_name);
+if ($gene_name) {
+    $gene_name = $gene_name[0];
+} else {
+    $gene_name = "";
+}
+td($gene_name);
 echo "</tr>";
 
 // sequence
