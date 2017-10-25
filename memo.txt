@@ -1,6 +1,3 @@
-detail.phpにはtable名とidを渡す(pmp00~99またはpmm00~99)
-detail.phpはimg.phpにprotein_idを渡す。これはidだけで良い。
-
-10/17 メモ
-index.phpとdetail.phpは一応完成しているので、あとはサーバーに移してから修正しよう。
-img.phpは未着手。
+TODO
+result_protein.phpで、複数のNCがヒットした場合に対応する
+(そもそも、学名からのNCの検索が機能していない可能性がある)

@@ -1,14 +1,14 @@
 <?php
 $id = $_GET["id"];
-$link=mysql_connect("localhost","root","");
-$db=mysql_select_db("bacteria_protein",$link);
-$dbid=str_replace(".","",$id);
-$dbid="pmp" . substr($dbid,-3,2);
-$sql="SELECT motif_id, start, end FROM " . $dbid ." WHERE protein_id = " . '"' . $id . '"' . " ;";
+$link = mysql_connect("localhost", "root", "");
+$db = mysql_select_db("bacteria_protein", $link);
+$dbid = str_replace(".", "", $id);
+$dbid = "pmp" . substr($dbid, -3, 2);
+$sql = "SELECT motif_id, start, end FROM " . $dbid . " WHERE protein_id = " . '"' . $id . '"' . " ;";
 $result = mysql_query($sql);
 $arrays = array();
-while ($array = mysql_fetch_array($result)){
-    array_push($arrays,$array);
+while ($array = mysql_fetch_array($result)) {
+    array_push($arrays, $array);
 }
 $entries = count($arrays);
 
@@ -19,11 +19,11 @@ ImageFilledRectangle($img, 0, 0, 2000, 400, $bground);
 
 // 1本の横線
 $black = ImageColorAllocate($img, 0, 0, 0);
-$dbid=str_replace(".","",$id);
-$dbid=substr($id,-4,2);
-$sql="SELECT length FROM protein" . $dbid ." WHERE protein_id = " . '"' . $id . '"' . " ;";
+$dbid = str_replace(".", "", $id);
+$dbid = substr($id, -4, 2);
+$sql = "SELECT length FROM protein" . $dbid . " WHERE protein_id = " . '"' . $id . '"' . " ;";
 $length = mysql_query($sql);
-if($length){
+if ($length) {
     $length = mysql_fetch_array($length);
     $length = $length[0];
 } else {
@@ -39,7 +39,7 @@ $filled[] = array();
 $filled_square = array();
 
 // 対応する画像を描画していく
-for($i=0;$i<$entries;$i++){
+for ($i = 0; $i < $entries; $i++) {
     $array = $arrays[$i];
     $motif_id = $array[0];
     $id = substr($motif_id, -3, 2);
@@ -57,10 +57,10 @@ for($i=0;$i<$entries;$i++){
     $motif_id_old = $motif_id;
     // ここから描画
     $motif_id = substr($motif_id, 3, 5);
-    while(true){
+    while (true) {
         $first = substr($motif_id, 0, 1);
         if ($first == "0") {
-           $motif_id = substr($motif_id, 1); 
+            $motif_id = substr($motif_id, 1);
         } else {
             break;
         }
@@ -75,49 +75,48 @@ for($i=0;$i<$entries;$i++){
     $green = $amari / 26;
     $green = floor($green);
     $green = $green * 8 + 55;
-    $blue = ( $amari % 26 ) * 8 + 55;
+    $blue = ($amari % 26) * 8 + 55;
     $color = ImageColorAllocate($img, $red, $green, $blue);
     $included_square = 0;
     // 画像が重ならないかどうか
-    for ($l = $start; $l < $end; $l++){
-        if (in_array($l ,$filled_square)){
+    for ($l = $start; $l < $end; $l++) {
+        if (in_array($l, $filled_square)) {
             $included_square = 1;
         }
     }
     // 重ならないなら、線より上に表示
-    if ($included_square == 0){
+    if ($included_square == 0) {
         ImageFilledRectangle($img, $start, 45, $end, 93, $color);
-        for ($l = $start; $l < $end; $l++){
+        for ($l = $start; $l < $end; $l++) {
             $filled_square[] = $l;
         }
-    }
-    // 重なるなら、線より下に表示
+    } // 重なるなら、線より下に表示
     else {
         ImageFilledRectangle($img, $start, 97, $end, 145, $color);
     }
     // 描画する文字
-    $message = $motif_id_old." ".$motif_name;
+    $message = $motif_id_old . " " . $motif_name;
     $str_length = strlen($message);
-    $str_end = $start + $str_length*10;
+    $str_end = $start + $str_length * 10;
 
     // 文字を描画する位置を探す
     // 何段ずらすかを決めるための変数
     $position = 0;
-    for ($l = 0; $l < count($filled); $l++){
+    for ($l = 0; $l < count($filled); $l++) {
         $array = $filled[$l];
         // startからstr_endの点について、arrayに含まれる点が含まれるかどうか調べる
         // $arrayにstartからstr_endまでの点のどれかが含まれるかを表す変数
         $included = 0;
-        for ($n = $start; $n < $str_end; $n++){
-            if (in_array($n, $array)){
+        for ($n = $start; $n < $str_end; $n++) {
+            if (in_array($n, $array)) {
                 $included = 1;
             }
         }
         // $arrayにstartからendまでのどの点も含まれない場合
-        if ($included == 0){            
+        if ($included == 0) {
             $position = $l;
             // startからendまでの座標を配列に追加
-            for ($n = $start; $n < $str_end; $n++){
+            for ($n = $start; $n < $str_end; $n++) {
                 $array[] = $n;
             }
             $filled[$l] = $array;
@@ -126,31 +125,28 @@ for($i=0;$i<$entries;$i++){
         // 含まれる場合、次のループへ
         // ただし、$l=$length-1の場合、配列を追加する
         else {
-            if ($l == count($filled)-1){
+            if ($l == count($filled) - 1) {
                 $position = count($filled);
                 $filled[] = array();
                 // 追加した配列
                 $array = $filled[$l + 1];
                 // その配列にポジションを追加
-                for ($n = $start; $n < $str_end; $n++){
+                for ($n = $start; $n < $str_end; $n++) {
                     $array[] = $n;
                 }
                 $filled[$l + 1] = $array;
                 break;
             }
         }
-    }   
+    }
     // 文字の描画
     if ($position == 0) {
         $draw_position = 30;
-    }
-    else if ($position == 1) {
+    } else if ($position == 1) {
         $draw_position = 15;
-    }
-    else if ($position == 2) {
+    } else if ($position == 2) {
         $draw_position = 0;
-    }
-    else {
+    } else {
         $draw_position = 100 + $position * 15;
     }
     imagestring($img, 5, $start, $draw_position, $message, $black);

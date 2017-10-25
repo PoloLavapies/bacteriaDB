@@ -7,7 +7,7 @@
 <br/>
 
 <form id="return_btn">
-<input type="button" value="検索画面に戻る" onClick="history.back()">
+    <input type="button" value="検索画面に戻る" onClick="history.back()">
 </form>
 
 <?php
@@ -32,16 +32,16 @@ function td($str)
 function hyoji($array)
 {
     echo("<tr>");
-    for ($j = 1; $j < 9; $j++) {
+    for ($j = 1; $j < 11; $j++) {
         td($array[$j]);
     }
-    $link = "<a href=detail.php?id=" . $array[0] . ">link</a>";
+    $link = "<form action='detail.php' method='post'><input type='hidden' name='id' value='" . $array[0] . "'><input type='submit' value='詳細'></form>";
     td($link);
     echo("</tr>");
 }
 
 // resultを展開する関数
-function display_all($result,$dbid)
+function display_all($result, $dbid)
 {
     while ($array = mysql_fetch_array($result)) {
         // protein_name
@@ -57,7 +57,7 @@ function display_all($result,$dbid)
             $protein_name = "";
         }
         // gene_name
-        $protein_id2=substr($protein_id,0,-1);
+        $protein_id2 = substr($protein_id, 0, -1);
         $sql = "SELECT gene_name FROM gene_namep" . $id . " WHERE protein_id = " . '"' . $protein_id2 . '"' . " ;";
         $gene_name = mysql_query($sql);
         $gene_name = mysql_fetch_array($gene_name);
@@ -65,6 +65,25 @@ function display_all($result,$dbid)
             $gene_name = $gene_name[0];
         } else {
             $gene_name = "";
+        }
+        // gakumei
+        $sql = "SELECT gakumei FROM psp" . $id . " WHERE protein_id = " . '"' . $protein_id2 . '"' . " ;";
+        $gakumei = mysql_query($sql);
+        $gakumei = mysql_fetch_array($gakumei);
+        if ($gakumei) {
+            $gakumei = $gakumei[0];
+        } else {
+            $gakumei = "";
+        }
+        // NC
+        // これを実行する段階で、gakumeiに含まれる特殊な文字はすでに変換されている
+        $sql = "SELECT NC FROM NC_gakumei WHERE gakumei = " . '"' . $gakumei . '"' . " ;";
+        $NC = mysql_query($sql);
+        $NC = mysql_fetch_array($NC);
+        if ($NC) {
+            $NC = $NC[0];
+        } else {
+            $NC = "";
         }
         // motif_name
         $motif_id = $array[2];
@@ -77,7 +96,7 @@ function display_all($result,$dbid)
         } else {
             $motif_name = "";
         }
-        $new_array = array($dbid . "_" . $array[0], $array[1], $protein_name, $gene_name, $array[2], $motif_name, $array[3], $array[4], $array[5],);
+        $new_array = array($dbid . "_" . $array[0], $array[1], $protein_name, $gene_name, $NC, $gakumei, $array[2], $motif_name, $array[3], $array[4], $array[5],);
         hyoji($new_array);
     }
 }
@@ -87,16 +106,18 @@ echo "<table>";
 th("protein_id");
 th("protein_name");
 th("gene_name");
+th("bacteria_id");
+th("bacteria_name");
 th("motif_id");
 th("motif_name");
 th("start");
 th("end");
 th("e_value");
-th("detail");
+th("詳細");
 
 /*
 To test
-3つの検索パターンについて、SQL文が正しく発行されているか
+5つの検索パターンについて、SQL文が正しく発行されているか
 その検索結果のnew_arrayの内容が正しいか
 */
 
@@ -116,15 +137,15 @@ if ($_POST) {
             $dbid = "pmm" . substr($text, -2, 2);
             $sql = "SELECT * FROM " . $dbid . " WHERE motif_id = " . '" ' . $text . ' "' . " ;";
             $result = mysql_query($sql);
-            display_all($result,$dbid);
+            display_all($result, $dbid);
         }
     } elseif ($search === "protein_id") {
         if ($text !== "") {
             $id = str_replace(".", "", $text);
             $dbid = "pmp" . substr($id, -3, 2);
             $sql = "SELECT * FROM " . $dbid . " WHERE protein_id = " . '"' . $text . '"' . " ;";
-            $result = mysql_query($sql);
-            display_all($result,$dbid);
+	    $result = mysql_query($sql);
+            display_all($result, $dbid);
         }
     } elseif ($search === "gene_name") {
         if ($text !== "") {
@@ -139,9 +160,9 @@ if ($_POST) {
             $id = str_replace("-", "", $id);
             $id = str_replace("_", "", $id);
             $id = substr($id, 0, 1);
-	    $id = mb_strtolower($id);
+            $id = mb_strtolower($id);
             $sql = "SELECT protein_id FROM gene_nameg" . $id . " WHERE gene_name = " . '"' . $text . '"' . " ;";
-	    $result = mysql_query($sql);
+            $result = mysql_query($sql);
             while ($array = mysql_fetch_array($result)) {
                 $protein_id = $array[0];
                 // sqlの発行
@@ -149,8 +170,8 @@ if ($_POST) {
                 $dbid = substr($id, -3, 2);
                 $sql = "SELECT * FROM pmp" . $dbid . " WHERE protein_id = " . '"' . $protein_id . '"' . " ;";
                 echo $sql;
-		$result2 = mysql_query($sql);
-                display_all($result2,$dbid);
+                $result2 = mysql_query($sql);
+                display_all($result2, $dbid);
             }
         }
     }
